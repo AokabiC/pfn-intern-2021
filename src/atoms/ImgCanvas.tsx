@@ -5,10 +5,16 @@ import React, { useEffect, useRef } from 'react'
 interface Props {
   width: number
   height: number
+  setImageData: React.Dispatch<React.SetStateAction<ImageData | undefined>>
   img?: CanvasImageSource
 }
 
-export const ImgCanvas: React.FC<Props> = ({ width, height, img }) => {
+export const ImgCanvas: React.FC<Props> = ({
+  width,
+  height,
+  setImageData,
+  img,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const getContext = () => {
@@ -22,8 +28,10 @@ export const ImgCanvas: React.FC<Props> = ({ width, height, img }) => {
     if (img) {
       ctx?.clearRect(0, 0, width, height)
       ctx?.drawImage(img, 0, 0)
+      // pass ImageData to parent component
+      setImageData(ctx?.getImageData(0, 0, width, height))
     }
-  })
+  }, [height, img, setImageData, width])
 
   return (
     <canvas
@@ -33,6 +41,7 @@ export const ImgCanvas: React.FC<Props> = ({ width, height, img }) => {
       css={css`
         position: absolute;
         top: 0;
+        cursor: none;
       `}
     />
   )
