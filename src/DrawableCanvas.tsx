@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import React, { useEffect, useRef, useState } from 'react'
 
 export const DrawableCanvas: React.FC = () => {
@@ -51,6 +53,11 @@ export const DrawableCanvas: React.FC = () => {
       onMouseUp={() => endDrawing()}
       onMouseLeave={() => endDrawing()}
       onMouseMove={(e) => draw(e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
+      css={css`
+        position: absolute;
+        top: 0;
+        opacity: 0.5;
+      `}
     />
   )
 }

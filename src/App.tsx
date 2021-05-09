@@ -1,14 +1,9 @@
-import { DrawableCanvas } from 'DrawableCanvas'
-import { FileInput } from 'FileInput'
+/** @jsxImportSource @emotion/react */
+import { AnnotationTool } from 'molecules/AnnotationTool'
 import React from 'react'
 
 const App: React.FC = () => {
-  return (
-    <div>
-      <FileInput />
-      <DrawableCanvas />
-    </div>
-  )
+  return <AnnotationTool />
 }
 
 export default App
