@@ -8,6 +8,7 @@ interface Props {
   imageData: ImageData | undefined
   penSize: number
   tool: 'pen' | 'eraser'
+  setCanvasDataUrl: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
 export const DrawableCanvas: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const DrawableCanvas: React.FC<Props> = ({
   imageData,
   penSize,
   tool,
+  setCanvasDataUrl,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
@@ -90,16 +92,10 @@ export const DrawableCanvas: React.FC<Props> = ({
 
   const endDrawing = () => {
     setDrawing(false)
-  }
-
-  const handleDownload: React.MouseEventHandler<HTMLButtonElement> = () => {
     const canvas = canvasRef.current
     if (canvas == null) return
     let dataUrl = canvas.toDataURL()
-    const a = document.createElement('a')
-    a.download = 'annotation.png'
-    a.href = dataUrl
-    a.click()
+    setCanvasDataUrl(dataUrl)
   }
 
   // canvas default
@@ -131,14 +127,6 @@ export const DrawableCanvas: React.FC<Props> = ({
           opacity: 0.5;
         `}
       />
-      <button
-        onClick={handleDownload}
-        css={css`
-          position: absolute;
-        `}
-      >
-        ダウンロード
-      </button>
     </>
   )
 }
