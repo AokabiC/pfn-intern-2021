@@ -15,5 +15,4 @@ yarn start
 
 ## Demo
 
-![image](./assets/Noah_Syndergaard.jpg)
-![annotation](./assets/Noah_Syndergaard.jpg.annotation.png)
+![demo](./assets/demo.gif)
