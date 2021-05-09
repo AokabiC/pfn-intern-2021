@@ -3,7 +3,7 @@ import { css } from '@emotion/react'
 import { DrawableCanvas } from 'atoms/DrawableCanvas'
 import { FileInput } from 'atoms/FileInput'
 import { ImgCanvas } from 'atoms/ImgCanvas'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 interface ImgData {
   file: File | undefined
@@ -48,10 +48,6 @@ export const AnnotationTool: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(imageData)
-  }, [imageData])
-
   return (
     <>
       <FileInput ref={fileInput} onSubmit={handleSubmit} />
@@ -70,6 +66,8 @@ export const AnnotationTool: React.FC = () => {
           width={uploadedImg.element?.width ?? 0}
           height={uploadedImg.element?.height ?? 0}
           imageData={imageData}
+          penSize={50}
+          tool="pen"
         />
       </div>
     </>

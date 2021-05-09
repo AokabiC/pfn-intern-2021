@@ -6,14 +6,16 @@ interface Props {
   width: number
   height: number
   imageData: ImageData | undefined
+  penSize: number
+  tool: 'pen' | 'eraser'
 }
-
-const PEN_SIZE_RADIUS = 30
 
 export const DrawableCanvas: React.FC<Props> = ({
   width,
   height,
   imageData,
+  penSize,
+  tool,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
@@ -35,22 +37,22 @@ export const DrawableCanvas: React.FC<Props> = ({
     }
     const ctx = getContext()
     let canvasData = ctx?.getImageData(
-      x - PEN_SIZE_RADIUS,
-      y - PEN_SIZE_RADIUS,
-      PEN_SIZE_RADIUS * 2 + 1,
-      PEN_SIZE_RADIUS * 2 + 1,
+      x - penSize,
+      y - penSize,
+      penSize * 2 + 1,
+      penSize * 2 + 1,
     )
     if (canvasData) {
-      for (let nx = 0; nx <= 2 * PEN_SIZE_RADIUS; nx++) {
-        for (let ny = 0; ny <= 2 * PEN_SIZE_RADIUS; ny++) {
-          const pos = (ny * (PEN_SIZE_RADIUS * 2 + 1) + nx) * 4
-          const mx = x + nx - PEN_SIZE_RADIUS
-          const my = y + ny - PEN_SIZE_RADIUS
+      for (let nx = 0; nx <= 2 * penSize; nx++) {
+        for (let ny = 0; ny <= 2 * penSize; ny++) {
+          const pos = (ny * (penSize * 2 + 1) + nx) * 4
+          const mx = x + nx - penSize
+          const my = y + ny - penSize
 
           // ペン先(円)に含まれるか
           const distance = (x0: number, y0: number, x1: number, y1: number) =>
             Math.hypot(x1 - x0, y1 - y0)
-          if (distance(x, y, mx, my) > PEN_SIZE_RADIUS) continue
+          if (distance(x, y, mx, my) > penSize) continue
 
           // cursorが指すpixelとの色差が閾値以内か
           if (imageData) {
@@ -66,18 +68,38 @@ export const DrawableCanvas: React.FC<Props> = ({
             if (Math.abs(pointerColor[2] - color[2]) > 50) continue
           }
 
-          canvasData.data[pos] = 0
-          canvasData.data[pos + 1] = 255
-          canvasData.data[pos + 2] = 255
-          canvasData.data[pos + 3] = 255
+          switch (tool) {
+            case 'pen':
+              canvasData.data[pos] = 0
+              canvasData.data[pos + 1] = 255
+              canvasData.data[pos + 2] = 255
+              canvasData.data[pos + 3] = 255
+              break
+            case 'eraser':
+              canvasData.data[pos] = 0
+              canvasData.data[pos + 1] = 0
+              canvasData.data[pos + 2] = 0
+              canvasData.data[pos + 3] = 0
+              break
+          }
         }
       }
-      ctx?.putImageData(canvasData, x - PEN_SIZE_RADIUS, y - PEN_SIZE_RADIUS)
+      ctx?.putImageData(canvasData, x - penSize, y - penSize)
     }
   }
 
   const endDrawing = () => {
     setDrawing(false)
+  }
+
+  const handleDownload: React.MouseEventHandler<HTMLButtonElement> = () => {
+    const canvas = canvasRef.current
+    if (canvas == null) return
+    let dataUrl = canvas.toDataURL()
+    const a = document.createElement('a')
+    a.download = 'annotation.png'
+    a.href = dataUrl
+    a.click()
   }
 
   // canvas default
@@ -91,22 +113,32 @@ export const DrawableCanvas: React.FC<Props> = ({
   }, [height, width])
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      onMouseDown={(e) =>
-        startDrawing(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
-      }
-      onMouseUp={() => endDrawing()}
-      onMouseLeave={() => endDrawing()}
-      onMouseMove={(e) => draw(e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
-      css={css`
-        position: absolute;
-        top: 0;
-        cursor: crosshair;
-        opacity: 0.5;
-      `}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        onMouseDown={(e) =>
+          startDrawing(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
+        }
+        onMouseUp={() => endDrawing()}
+        onMouseLeave={() => endDrawing()}
+        onMouseMove={(e) => draw(e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
+        css={css`
+          position: absolute;
+          top: 0;
+          cursor: crosshair;
+          opacity: 0.5;
+        `}
+      />
+      <button
+        onClick={handleDownload}
+        css={css`
+          position: absolute;
+        `}
+      >
+        ダウンロード
+      </button>
+    </>
   )
 }
