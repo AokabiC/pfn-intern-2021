@@ -2,7 +2,12 @@
 import { css } from '@emotion/react'
 import React, { useEffect, useRef, useState } from 'react'
 
-export const DrawableCanvas: React.FC = () => {
+interface Props {
+  width: number
+  height: number
+}
+
+export const DrawableCanvas: React.FC<Props> = ({ width, height }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
 
@@ -45,8 +50,8 @@ export const DrawableCanvas: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      width="500px"
-      height="500px"
+      width={width}
+      height={height}
       onMouseDown={(e) =>
         startDrawing(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
       }
