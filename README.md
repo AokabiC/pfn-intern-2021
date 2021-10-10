@@ -1,5 +1,7 @@
 # Preferred Networks インターンシップ 2021 テーマ別課題
 
+https://tech.preferred.jp/ja/blog/internship-coding-task-2021/
+
 選択課題: JP01
 
 ## Start
